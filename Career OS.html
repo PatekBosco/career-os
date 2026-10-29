@@ -1,0 +1,1361 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Career OS</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:#0c0d0f;color:#e8e6e3;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Inter,sans-serif;font-size:14px;line-height:1.45}
+a{color:#c9a96a}
+.layout{display:flex;min-height:100vh}
+.sidebar{width:216px;flex-shrink:0;border-right:1px solid #202329;padding:18px 12px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:3px;background:#0a0b0d}
+.brand{font-weight:600;font-size:15px;letter-spacing:.4px;margin:0 8px 16px;color:#e8e6e3}
+.brand span{color:#c9a96a}
+.nav-item{padding:9px 12px;border-radius:8px;color:#8f959c;cursor:pointer;font-size:13.5px;display:flex;justify-content:space-between;align-items:center;user-select:none}
+.nav-item:hover{background:#14161a;color:#e8e6e3}
+.nav-item.active{background:#191c20;color:#e8e6e3;box-shadow:inset 2px 0 0 #c9a96a}
+.nav-item .cnt{font-size:11px;color:#6d737a;background:#1b1e23;border-radius:10px;padding:1px 7px}
+.main{flex:1;min-width:0;padding:18px 28px 48px;max-width:1360px}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-bottom:14px;border-bottom:1px solid #1d2025;margin-bottom:20px;flex-wrap:wrap}
+.topbar .date{color:#8f959c;font-size:13px}
+.search-wrap{position:relative;min-width:240px;flex:1;max-width:360px}
+.search-wrap input{width:100%}
+h1{font-size:22px;margin:0 0 4px;font-weight:600}
+h2{font-size:15px;margin:0 0 12px;font-weight:600;color:#d6d3ce}
+h3{font-size:14px;margin:0 0 12px;font-weight:600}
+.muted{color:#8f959c}
+.small{font-size:12px}
+.tiny{font-size:11.5px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.row.between{justify-content:space-between}
+.grid{display:grid;gap:12px}
+.metrics{grid-template-columns:repeat(auto-fill,minmax(168px,1fr))}
+.card{background:#131519;border:1px solid #22262c;border-radius:12px;padding:15px}
+.metric .label{font-size:11.5px;color:#8f959c;text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px}
+.metric .val{font-size:24px;font-weight:600;letter-spacing:-.5px}
+.metric .sub{font-size:11.5px;color:#6d737a;margin-top:4px}
+.btn{background:#1b1e23;border:1px solid #2b2f36;color:#e8e6e3;padding:8px 13px;border-radius:8px;cursor:pointer;font:inherit;font-size:13px;transition:.12s}
+.btn:hover{background:#22262c;border-color:#3a3f47}
+.btn.primary{background:#c9a96a;color:#151515;border-color:#c9a96a;font-weight:600}
+.btn.primary:hover{background:#d6b87c}
+.btn.ghost{background:transparent}
+.btn.sm{padding:5px 9px;font-size:12px}
+.btn.danger{color:#f85149;border-color:#3a2626}
+.btn.danger:hover{background:#2a1717}
+input,select,textarea{background:#0e1013;border:1px solid #2a2e35;color:#e8e6e3;border-radius:8px;padding:7px 10px;font:inherit;font-size:13px;width:100%}
+input:focus,select:focus,textarea:focus{outline:none;border-color:#4a4f58}
+textarea{resize:vertical;min-height:44px;font-size:12.5px}
+label{font-size:12px;color:#8f959c;display:block;margin-bottom:5px}
+.bar{height:6px;background:#23272d;border-radius:3px;overflow:hidden}
+.bar>i{display:block;height:100%;background:#c9a96a;border-radius:3px;transition:width .3s}
+.bar.green>i{background:#3fb950}
+.badge{font-size:11px;padding:2px 8px;border-radius:20px;background:#1e2228;color:#9aa0a6;white-space:nowrap}
+.badge.high{background:#2a2218;color:#d9b877}
+.badge.low{background:#1a1d21;color:#7b8189}
+.badge.ok{background:#16241a;color:#4fbf67}
+.badge.warn{background:#2a1e18;color:#e08a4a}
+.pill{font-size:11px;padding:3px 9px;border-radius:6px;background:#1a1d22;color:#8f959c;border:1px solid #262a30}
+.task{display:flex;gap:11px;padding:11px 12px;border:1px solid #22262c;border-radius:10px;background:#121417;align-items:flex-start}
+.task+.task{margin-top:8px}
+.task.done{opacity:.55}
+.task input[type=checkbox]{width:16px;height:16px;margin-top:2px;accent-color:#c9a96a;flex-shrink:0;cursor:pointer}
+.task-title{font-size:13.5px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.task.done .task-title span.t{text-decoration:line-through;color:#8f959c}
+.task-meta{font-size:11.5px;color:#7b8189;display:flex;gap:12px;flex-wrap:wrap;margin-top:3px;align-items:center}
+.task-meta input{width:70px;padding:3px 7px;font-size:12px}
+.task-body{flex:1;min-width:0}
+.task-actions{display:flex;gap:4px;flex-shrink:0}
+.icon-btn{background:transparent;border:none;color:#5f656c;cursor:pointer;font-size:15px;padding:2px 5px;border-radius:5px;line-height:1}
+.icon-btn:hover{background:#22262c;color:#e8e6e3}
+.chart{display:flex;gap:8px;align-items:flex-end;height:150px;padding-top:8px}
+.chart .col{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;height:100%;justify-content:flex-end}
+.chart .bars{display:flex;gap:3px;align-items:flex-end;height:100%;width:100%;justify-content:center}
+.chart .b{width:9px;border-radius:3px 3px 0 0;min-height:2px;transition:height .3s}
+.chart .b.planned{background:#33383f}
+.chart .b.actual{background:#c9a96a}
+.chart .day{font-size:11px;color:#7b8189}
+.chart .day.today{color:#c9a96a;font-weight:600}
+.legend{display:flex;gap:14px;font-size:11.5px;color:#8f959c;margin-top:10px}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.track-row{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid #1b1e23}
+.track-row:last-child{border-bottom:none}
+.track-row .name{flex:1;font-size:13px;min-width:0}
+.track-row .pct{font-size:12px;color:#8f959c;width:40px;text-align:right}
+.track-row .bar{width:110px;flex-shrink:0}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.tab{padding:7px 13px;border-radius:8px;background:#14161a;border:1px solid #22262c;color:#8f959c;cursor:pointer;font-size:12.5px;white-space:nowrap}
+.tab:hover{color:#e8e6e3}
+.tab.active{background:#1d2025;color:#e8e6e3;border-color:#3a3f47}
+.tab.active::before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;background:#c9a96a;margin-right:7px;vertical-align:1px}
+.module{border:1px solid #20242a;border-radius:10px;margin-bottom:12px;overflow:hidden}
+.module-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:11px 13px;background:#14161a;font-size:13px;font-weight:500}
+.module-body{padding:10px 12px}
+.empty{color:#6d737a;font-size:13px;padding:18px;text-align:center;border:1px dashed #262a30;border-radius:10px}
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.65);display:flex;align-items:center;justify-content:center;padding:16px;z-index:60;backdrop-filter:blur(2px)}
+.modal{background:#15181c;border:1px solid #2a2e35;border-radius:14px;padding:20px;width:100%;max-width:540px;max-height:90vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.form-row{margin-bottom:12px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:600px){.form-grid{grid-template-columns:1fr}}
+.deadline{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid #1b1e23;font-size:12.5px;align-items:center}
+.deadline:last-child{border-bottom:none}
+.next-card{border-color:#4a3f28;background:linear-gradient(0deg,#171410,#171410)}
+.table-wrap{overflow-x:auto;border:1px solid #20242a;border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:12.5px;min-width:720px}
+th{text-align:left;padding:9px 11px;color:#8f959c;font-weight:500;border-bottom:1px solid #20242a;background:#131519;font-size:11.5px;text-transform:uppercase;letter-spacing:.3px}
+td{padding:9px 11px;border-bottom:1px solid #1b1e23;vertical-align:top}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#14161a}
+.timer-widget{position:fixed;right:20px;bottom:20px;z-index:55;background:#1b1e23;border:1px solid #3a3f47;border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:14px;box-shadow:0 12px 40px rgba(0,0,0,.5)}
+.timer-widget .time{font-variant-numeric:tabular-nums;font-size:20px;font-weight:600;color:#c9a96a;min-width:64px}
+.check-line{display:flex;align-items:center;gap:9px;padding:6px 0;font-size:13px}
+.check-line input{width:15px;height:15px;accent-color:#c9a96a;flex-shrink:0}
+.progress-line{display:flex;align-items:center;gap:10px;font-size:12px;color:#8f959c;margin-bottom:6px}
+.progress-line .bar{flex:1}
+.notice{background:#1a1710;border:1px solid #3a3320;color:#d9b877;padding:10px 13px;border-radius:9px;font-size:12.5px;margin-bottom:14px}
+.notice.red{background:#1e1212;border-color:#3a2020;color:#e08a8a}
+@media(max-width:900px){
+ .layout{flex-direction:column}
+ .sidebar{width:100%;height:auto;position:static;flex-direction:row;overflow-x:auto;padding:10px;gap:4px;border-right:none;border-bottom:1px solid #202329}
+ .brand{display:none}
+ .nav-item{white-space:nowrap;padding:8px 11px}
+ .nav-item.active{box-shadow:inset 0 -2px 0 #c9a96a}
+ .nav-item .cnt{display:none}
+ .main{padding:16px 14px 48px}
+ h1{font-size:19px}
+}
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar" id="nav"></aside>
+  <main class="main">
+    <div class="topbar">
+      <div class="date" id="topdate"></div>
+      <div class="search-wrap"><input id="search" placeholder="Поиск по задачам и заметкам… (Enter)"></div>
+    </div>
+    <div id="view"></div>
+  </main>
+</div>
+<div id="modal-root"></div>
+<div id="timer-root"></div>
+
+<script>
+/* ================= УТИЛИТЫ ================= */
+const uid = () => Math.random().toString(36).slice(2, 9);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pad = n => String(n).padStart(2, '0');
+const iso = d => { const z = new Date(d.getTime() - d.getTimezoneOffset()*60000); return z.toISOString().slice(0,10); };
+const today = () => iso(new Date());
+const parseISO = s => { const [y,m,d] = s.split('-').map(Number); return new Date(y, m-1, d); };
+const addDays = (s,n) => { const d = parseISO(s); d.setDate(d.getDate()+n); return iso(d); };
+const weekStart = s => { const d = parseISO(s); const wd = (d.getDay()+6)%7; d.setDate(d.getDate()-wd); return iso(d); };
+const weekDays = s => Array.from({length:7},(_,i)=>addDays(s,i));
+const fmt = s => parseISO(s).toLocaleDateString('ru-RU',{day:'numeric',month:'long'});
+const fmtShort = s => parseISO(s).toLocaleDateString('ru-RU',{day:'2-digit',month:'2-digit'});
+const fmtH = h => (Math.round(h*10)/10).toString().replace('.',',') + ' ч';
+const DAYS = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
+const STATUSES = ['планирую откликнуться','отправлено','просмотрено','собеседование','тестовое задание','оффер','отказ'];
+const PRIORITIES = ['высокий','средний','низкий'];
+
+/* ================= ОПРЕДЕЛЕНИЯ ТРЕКОВ ================= */
+const TRACK_DEFS = [
+ { id:'sql', name:'SQL и аналитика данных', priority:'высокий', kind:'analytics', modules:[
+   {name:'Основы SQL и SELECT', h:2},
+   {name:'Фильтрация, сортировка, агрегатные функции', h:2},
+   {name:'GROUP BY и HAVING', h:2},
+   {name:'JOIN и объединение таблиц', h:2},
+   {name:'Подзапросы и CTE', h:2},
+   {name:'Оконные функции', h:2.5},
+   {name:'Работа с датами и NULL', h:2},
+   {name:'Сложные аналитические запросы', h:2.5},
+   {name:'Практика SQL-задач для собеседований', h:2},
+   {name:'Мини-проект с реальным набором данных', h:3}
+ ]},
+ { id:'product', name:'Продуктовая аналитика и метрики', priority:'высокий', kind:'analytics', modules:[
+   {name:'Основы продуктового мышления', h:1.5},
+   {name:'Воронки и конверсия', h:1.5},
+   {name:'Retention — удержание пользователей', h:1.5},
+   {name:'Churn — отток пользователей', h:1.5},
+   {name:'Cohort analysis — когортный анализ', h:1.5},
+   {name:'DAU, WAU, MAU — активные пользователи', h:1.5},
+   {name:'ARPU и ARPPU — средний доход на пользователя', h:1.5},
+   {name:'LTV и CAC — ценность клиента и стоимость привлечения', h:1.5},
+   {name:'A/B-тестирование', h:2},
+   {name:'Основы статистики и проверка гипотез', h:2},
+   {name:'Интерпретация результатов и рекомендации бизнесу', h:1.5}
+ ]},
+ { id:'python', name:'Python для аналитики', priority:'средний', kind:'analytics', modules:[
+   {name:'Переменные, типы данных, условия', h:2},
+   {name:'Циклы и функции', h:2},
+   {name:'Списки, словари, множества', h:2},
+   {name:'Чтение и запись файлов', h:1.5},
+   {name:'pandas', h:2.5},
+   {name:'Очистка данных', h:2},
+   {name:'Группировка и объединение таблиц', h:2},
+   {name:'Анализ данных', h:2.5},
+   {name:'Визуализация', h:2},
+   {name:'Применение Python в аналитическом проекте', h:3}
+ ]},
+ { id:'excel', name:'Excel и Power BI', priority:'средний', kind:'analytics', modules:[
+   {name:'Формулы и функции Excel', h:1.5},
+   {name:'Поиск и сопоставление данных', h:1.5},
+   {name:'Сводные таблицы', h:1.5},
+   {name:'Очистка данных', h:1.5},
+   {name:'Power Query', h:2},
+   {name:'Создание модели данных', h:2},
+   {name:'DAX — язык расчётов Power BI', h:2.5},
+   {name:'Разработка дашборда', h:2},
+   {name:'Визуализация бизнес-показателей', h:1.5},
+   {name:'Итоговый интерактивный отчёт', h:2.5}
+ ]},
+ { id:'law', name:'Корпоративное и договорное право', priority:'средний', kind:'law', modules:[
+   {name:'ГК РФ, часть первая: сделки, обязательства, ответственность', h:1.5, note:'Практика: разобрать сделку, определить состав обязательства и вид ответственности.'},
+   {name:'ГК РФ, часть вторая: основные виды договоров', h:1.5, note:'Практика: сравнить два вида договоров и выделить различия в ответственности.'},
+   {name:'Заключение, изменение и расторжение договоров', h:1.5, note:'Практика: составить проект протокола разногласий.'},
+   {name:'Недействительность сделок и последствия', h:1.5, note:'Практика: определить основания недействительности в предложенной ситуации.'},
+   {name:'Убытки, неустойка и обеспечение обязательств', h:1.5, note:'Практика: рассчитать неустойку и оценить соразмерность.'},
+   {name:'Договор поставки, подряд, услуги, аренда, заём', h:1.5, note:'Практика: выявить риски в договоре поставки, предложить исправления.'},
+   {name:'Федеральный закон № 14-ФЗ об ООО', h:1.5, note:'Практика: подготовить проект решения общего собрания.'},
+   {name:'Полномочия директора и корпоративные решения', h:1.5, note:'Практика: проверить полномочия и оформить корпоративное решение.'},
+   {name:'Крупные сделки и сделки с заинтересованностью', h:1.5, note:'Практика: квалифицировать сделку и обосновать порядок одобрения.'},
+   {name:'Анализ договорных рисков на практических примерах', h:2, note:'Практика: полный разбор договора с заключением.'}
+ ]},
+ { id:'tax', name:'Налоговое право РФ', priority:'средний', kind:'law', modules:[
+   {name:'Структура НК РФ', h:1.5},
+   {name:'Налоговые обязанности и налоговый контроль', h:1.5},
+   {name:'НДС', h:2},
+   {name:'Налог на прибыль организаций', h:2},
+   {name:'НДФЛ', h:2},
+   {name:'Документальное подтверждение расходов', h:1.5},
+   {name:'Налоговые риски договоров и сделок', h:2},
+   {name:'Налоговые проверки', h:1.5},
+   {name:'Возражения на акты налоговых проверок', h:2},
+   {name:'Обжалование решений налоговых органов', h:2},
+   {name:'Налоговые споры и судебная практика', h:2}
+ ]},
+ { id:'gpk', name:'ГПК РФ и АПК РФ', priority:'низкий', kind:'law', modules:[
+   {name:'Подсудность и подведомственность в применимом процессуальном контексте', h:1.5},
+   {name:'Участники процесса', h:1.5},
+   {name:'Доказательства', h:1.5},
+   {name:'Процессуальные сроки', h:1.5},
+   {name:'Исковое заявление', h:1.5},
+   {name:'Обеспечительные меры', h:1.5},
+   {name:'Судебные расходы', h:1.5},
+   {name:'Апелляция и кассация', h:1.5},
+   {name:'Исполнение судебных актов', h:1.5}
+ ]},
+ { id:'career', name:'Карьера и трудоустройство', priority:'высокий', kind:'career', modules:[
+   {name:'Анализировать вакансии в Москве и Санкт-Петербурге', h:0.5},
+   {name:'Разделять юридические и аналитические вакансии', h:0.5},
+   {name:'Сохранять требования работодателей', h:0.5},
+   {name:'Вести список откликов', h:0.5},
+   {name:'Фиксировать ответы работодателей', h:0.5},
+   {name:'Отмечать приглашения на собеседования', h:0.5},
+   {name:'Фиксировать причины отказов', h:0.5},
+   {name:'Вести подготовку к интервью', h:1},
+   {name:'Обновлять резюме', h:1},
+   {name:'Отслеживать зарплатные предложения', h:0.5}
+ ]}
+];
+
+const DEFAULT_SCHEDULE = {
+ 0:[{title:'SQL',trackId:'sql',h:1.5},{title:'Корпоративное право',trackId:'law',h:1.5},{title:'Поиск работы',trackId:'career',h:1}],
+ 1:[{title:'Python',trackId:'python',h:1.5},{title:'ГК РФ и договорное право',trackId:'law',h:1.5},{title:'SQL',trackId:'sql',h:0.5}],
+ 2:[{title:'SQL',trackId:'sql',h:1.5},{title:'Налоговое право',trackId:'tax',h:1.5},{title:'Поиск работы',trackId:'career',h:1}],
+ 3:[{title:'Power BI или Excel',trackId:'excel',h:1.5},{title:'Корпоративное право',trackId:'law',h:1.5},{title:'Python',trackId:'python',h:0.5}],
+ 4:[{title:'SQL и аналитическая практика',trackId:'sql',h:1.5},{title:'Налоговое право',trackId:'tax',h:1.5},{title:'Поиск работы',trackId:'career',h:1}],
+ 5:[{title:'Аналитический проект',trackId:'sql',h:2},{title:'Юридический практический кейс',trackId:'law',h:1.5},{title:'Повторение',trackId:null,h:1}],
+ 6:[{title:'Поиск работы',trackId:'career',h:1},{title:'Планирование следующей недели',trackId:null,h:0.5}]
+};
+
+const PROJECT_STAGES = ['Идея','Подготовка данных','Анализ','Визуализация','Выводы','Проверка качества','Публикация в портфолио'];
+const CASE_STAGES = ['Постановка задачи','Сбор норм и практики','Анализ рисков','Рекомендации','Проверка','Оформление'];
+
+/* ================= СОСТОЯНИЕ ================= */
+const LS_KEY = 'careerOS_v1';
+let state = null;
+let ui = { view:'overview', period:'week', trackId:null, taskFilter:{status:'all',priority:'all',track:'all',q:''} };
+
+function seed(){
+  const s = { settings:{ weeklyGoal:25, startDate:today() }, tracks:[], tasks:[], schedule:{}, sessions:[], applications:[], projects:[], reports:[] };
+  TRACK_DEFS.forEach(td => {
+    s.tracks.push({ id:td.id, name:td.name, priority:td.priority, kind:td.kind, archived:false,
+      modules: td.modules.map((m,i)=>({ id:td.id+'_m'+i, name:m.name })) });
+    td.modules.forEach((m,i)=>{
+      s.tasks.push({
+        id:'task_'+td.id+'_'+i, title:m.name, trackId:td.id, moduleId:td.id+'_m'+i,
+        priority: td.priority, dueDate:null, plannedH:m.h, actualH:0, done:false, completedAt:null,
+        link:'', notes:'', comment:m.note || '', custom:false
+      });
+    });
+  });
+  s.schedule = JSON.parse(JSON.stringify(DEFAULT_SCHEDULE));
+  s.projects = [
+    { id:uid(), name:'SQL-анализ продаж или финансовых операций', stages: PROJECT_STAGES.map(n=>({name:n,done:false})) },
+    { id:uid(), name:'BI-дашборд с ключевыми показателями', stages: PROJECT_STAGES.map(n=>({name:n,done:false})) },
+    { id:uid(), name:'Продуктовый анализ воронки и удержания', stages: PROJECT_STAGES.map(n=>({name:n,done:false})) },
+    { id:uid(), name:'Практический кейс: анализ договора', stages: CASE_STAGES.map(n=>({name:n,done:false})), legal:true },
+    { id:uid(), name:'Практический кейс: корпоративное решение', stages: CASE_STAGES.map(n=>({name:n,done:false})), legal:true },
+    { id:uid(), name:'Практический кейс: разбор налогового спора', stages: CASE_STAGES.map(n=>({name:n,done:false})), legal:true }
+  ];
+  // Назначить первые незавершённые задачи треков на сегодня по расписанию
+  const wd = (new Date().getDay()+6)%7;
+  (s.schedule[wd]||[]).forEach(slot=>{
+    if(!slot.trackId) return;
+    const t = s.tasks.find(x=>x.trackId===slot.trackId && !x.done && !x.dueDate);
+    if(t) t.dueDate = today();
+  });
+  return s;
+}
+
+function load(){
+  try{ const raw = localStorage.getItem(LS_KEY); if(raw) state = JSON.parse(raw); }catch(e){ state = null; }
+  if(!state || !state.tracks || !state.tasks) state = seed();
+  if(!state.settings) state.settings = { weeklyGoal:25, startDate:today() };
+  if(!state.reports) state.reports = [];
+  let migrated = false;
+state.tasks.forEach(t=>{
+  if(!t.done || !t.completedAt) return;
+  const ss = state.sessions.filter(s=>s.taskId===t.id);
+  if(ss.length === 1 &&
+     ss[0].date === t.completedAt &&
+     ss[0].hours === t.plannedH &&
+     !ss[0].auto){
+    ss[0].auto = true;
+    migrated = true;
+  }
+});
+if(migrated) save();
+  if(ui.trackId===null) ui.trackId = (state.tracks.find(t=>!t.archived)||{}).id || null;
+}
+function save(){ try{ localStorage.setItem(LS_KEY, JSON.stringify(state)); }catch(e){ console.warn('Не удалось сохранить', e); } }
+
+/* ================= ХЕЛПЕРЫ ================= */
+const getTrack = id => state.tracks.find(t=>t.id===id);
+const getTask = id => state.tasks.find(t=>t.id===id);
+const activeTracks = () => state.tracks.filter(t=>!t.archived);
+const tasksOfTrack = id => state.tasks.filter(t=>t.trackId===id);
+const tasksOfModule = id => state.tasks.filter(t=>t.moduleId===id);
+const isOverdue = t => !t.done && t.dueDate && t.dueDate < today();
+const taskStatus = t => t.done ? 'завершено' : (t.actualH > 0 ? 'в процессе' : 'не начато');
+const sumH = arr => arr.reduce((a,b)=>a+(+b||0),0);
+
+function progress(tasks){ const total=tasks.length, done=tasks.filter(t=>t.done).length; return {total, done, pct: total? Math.round(done/total*100):0}; }
+function trackProgress(track){ return progress(tasksOfTrack(track.id)); }
+function moduleProgress(modId){ return progress(tasksOfModule(modId)); }
+function kindProgress(kind){
+  const ids = state.tracks.filter(t=>t.kind===kind).map(t=>t.id);
+  return progress(state.tasks.filter(t=>ids.includes(t.trackId)));
+}
+function periodRange(p){
+  const t = today();
+  if(p==='today') return {start:t, end:t};
+  if(p==='month'){ const d=parseISO(t); return {start:iso(new Date(d.getFullYear(),d.getMonth(),1)), end:iso(new Date(d.getFullYear(),d.getMonth()+1,0))}; }
+  const s = weekStart(t); return {start:s, end:addDays(s,6)};
+}
+function completedIn(r){ return state.tasks.filter(t=>t.completedAt && t.completedAt>=r.start && t.completedAt<=r.end); }
+function hoursIn(r){ return sumH(state.sessions.filter(s=>s.date>=r.start && s.date<=r.end).map(s=>s.hours)); }
+function addSession(taskId, hours, date){
+  const t = getTask(taskId); if(!t) return;
+  t.actualH = Math.round((t.actualH + hours)*100)/100;
+  state.sessions.push({ id:uid(), taskId, date:date||today(), hours });
+}
+function setActual(t, h, auto){
+  const delta = Math.round((h - t.actualH)*100)/100;
+  t.actualH = Math.round(h*100)/100;
+  if(Math.abs(delta) > 0.001)
+    state.sessions.push({ id:uid(), taskId:t.id, date:today(), hours:delta, auto: !!auto });
+}
+function toggleTask(id){
+  const t = getTask(id); if(!t) return;
+  if(!t.done){
+    t.done = true;
+    t.completedAt = today();
+    if(!t.actualH) setActual(t, t.plannedH, true);   // auto = true
+  } else {
+    t.done = false;
+    t.completedAt = null;
+    const before = state.sessions.length;
+    state.sessions = state.sessions.filter(s=>!(s.auto && s.taskId===id));
+    if(state.sessions.length !== before){
+      const remaining = state.sessions.filter(s=>s.taskId===id)
+                                     .reduce((a,s)=>a+s.hours,0);
+      t.actualH = Math.round(Math.max(0, remaining)*100)/100;
+    }
+  }
+  save(); render();
+}
+function weekNum(){
+  const start = parseISO(state.settings.startDate || today());
+  const diff = Math.floor((parseISO(today()) - start) / 86400000);
+  return Math.max(1, Math.floor(diff/7)+1);
+}
+function nextAction(){
+  const pending = state.tasks.filter(t=>!t.done);
+  const high = pending.filter(t=>t.priority==='высокий');
+  const pool = high.length ? high : pending;
+  pool.sort((a,b)=>{
+    const da = a.dueDate || '9999-99-99', db = b.dueDate || '9999-99-99';
+    if(da!==db) return da<db?-1:1;
+    return PRIORITIES.indexOf(a.priority)-PRIORITIES.indexOf(b.priority);
+  });
+  return pool[0] || null;
+}
+
+/* ================= МОДАЛКИ ================= */
+function openModal(html){
+  document.getElementById('modal-root').innerHTML =
+    `<div class="modal-backdrop" onclick="if(event.target===this)closeModal()"><div class="modal">${html}</div></div>`;
+}
+function closeModal(){ document.getElementById('modal-root').innerHTML=''; }
+
+/* ================= НАВИГАЦИЯ И ШАПКА ================= */
+const NAV = [
+  ['overview','Обзор'],['tracks','Треки'],['tasks','Задачи'],['schedule','Расписание'],
+  ['projects','Проекты'],['jobs','Поиск работы'],['stats','Статистика'],['settings','Настройки']
+];
+function renderNav(){
+  const todayTasks = state.tasks.filter(t=>!t.done && t.dueDate===today()).length;
+  document.getElementById('nav').innerHTML =
+    `<div class="brand">Career<span>OS</span></div>` +
+    NAV.map(([id,label])=>{
+      let cnt = '';
+      if(id==='tasks') cnt = `<span class="cnt">${state.tasks.filter(t=>!t.done).length}</span>`;
+      if(id==='overview') cnt = `<span class="cnt">${todayTasks}</span>`;
+      return `<div class="nav-item ${ui.view===id?'active':''}" data-action="nav" data-view="${id}">${label}${cnt}</div>`;
+    }).join('');
+}
+function renderTopbar(){
+  const d = new Date();
+  document.getElementById('topdate').textContent =
+    d.toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+}
+
+/* ================= ОБЗОР ================= */
+function metricCard(label, val, sub){
+  return `<div class="card metric"><div class="label">${label}</div><div class="val">${val}</div><div class="sub">${sub||''}</div></div>`;
+}
+function overviewHTML(){
+  const r = periodRange(ui.period);
+  const done = completedIn(r);
+  const hours = hoursIn(r);
+  const goal = state.settings.weeklyGoal || 25;
+  const planPct = Math.min(100, Math.round(hours/goal*100));
+  const an = kindProgress('analytics');
+  const law = kindProgress('law');
+  const projectsDone = state.projects.filter(p=>p.stages.every(s=>s.done)).length;
+  const appsSent = state.applications.filter(a=>a.status!=='планирую откликнуться').length;
+
+  const periodLabel = ui.period==='today'?'за сегодня':ui.period==='month'?'за месяц':'за неделю';
+
+  // Задачи на сегодня
+  const todayTasks = state.tasks.filter(t=>t.dueDate===today());
+  const todayHTML = todayTasks.length ? todayTasks.map(taskRow).join('') :
+    `<div class="empty">На сегодня задач нет. Добавьте задачу или запланируйте её в треке.</div>`;
+
+  // Следующее действие
+  const na = nextAction();
+  const nextHTML = na ? `
+    <div class="card next-card">
+      <div class="row between" style="margin-bottom:8px">
+        <h2 style="margin:0">Следующее действие</h2>
+        <span class="badge high">${na.priority}</span>
+      </div>
+      <div style="display:flex;gap:11px;align-items:flex-start">
+        <input type="checkbox" data-action="toggle" data-id="${na.id}" style="width:16px;height:16px;margin-top:3px;accent-color:#c9a96a">
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:500">${esc(na.title)}</div>
+          <div class="small muted" style="margin-top:3px">
+            ${esc(getTrack(na.trackId)?.name || '')} · план ${fmtH(na.plannedH)}${na.dueDate? ' · до '+fmt(na.dueDate):''}
+          </div>
+        </div>
+      </div>
+    </div>` : `<div class="card"><h2>Следующее действие</h2><div class="empty">Все задачи выполнены 🎉</div></div>`;
+
+  // Календарь недели
+  const ws = weekStart(today());
+  const days = weekDays(ws);
+  const maxDayH = Math.max(1, ...days.map(d=>sumH((state.schedule[days.indexOf(d)]||[]).map(x=>x.h))));
+  const calendarHTML = days.map((d,i)=>{
+    const slots = state.schedule[i] || [];
+    const total = sumH(slots.map(s=>s.h));
+    const isToday = d===today();
+    return `<div class="card" style="padding:12px;${isToday?'border-color:#4a3f28':''}">
+      <div class="row between" style="margin-bottom:8px">
+        <span style="font-size:12px;font-weight:600;${isToday?'color:#c9a96a':''}">${DAYS[i]} ${fmtShort(d)}</span>
+        <span class="tiny muted">${fmtH(total)}</span>
+      </div>
+      ${slots.length ? slots.map(s=>`<div class="tiny muted" style="padding:3px 0;border-top:1px solid #1b1e23">${esc(s.title)} · ${fmtH(s.h)}</div>`).join('') : `<div class="tiny muted">—</div>`}
+    </div>`;
+  }).join('');
+
+  // График план/факт
+  const chartData = days.map((d,i)=>{
+    const planned = sumH((state.schedule[i]||[]).map(s=>s.h));
+    const actual = sumH(state.sessions.filter(s=>s.date===d).map(s=>s.hours));
+    return {d, i, planned, actual};
+  });
+  const maxH = Math.max(1, ...chartData.map(x=>Math.max(x.planned,x.actual)));
+  const chartHTML = chartData.map(x=>`
+    <div class="col">
+      <div class="bars">
+        <div class="b planned" style="height:${Math.max(2,x.planned/maxH*100)}%" title="План: ${fmtH(x.planned)}"></div>
+        <div class="b actual" style="height:${Math.max(2,x.actual/maxH*100)}%" title="Факт: ${fmtH(x.actual)}"></div>
+      </div>
+      <div class="day ${x.d===today()?'today':''}">${DAYS[x.i]}</div>
+    </div>`).join('');
+
+  // Прогресс треков
+  const tracksHTML = activeTracks().map(t=>{
+    const p = trackProgress(t);
+    return `<div class="track-row">
+      <div class="name">${esc(t.name)} <span class="tiny muted">(${p.done}/${p.total})</span></div>
+      <div class="bar"><i style="width:${p.pct}%"></i></div>
+      <div class="pct">${p.pct}%</div>
+    </div>`;
+  }).join('');
+
+  // Дедлайны
+  const deadlines = state.tasks.filter(t=>!t.done && t.dueDate && t.dueDate<=addDays(today(),7))
+    .sort((a,b)=>a.dueDate<b.dueDate?-1:1).slice(0,6);
+  const dlHTML = deadlines.length ? deadlines.map(t=>`
+    <div class="deadline">
+      <div style="min-width:0">
+        <div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(t.title)}</div>
+        <div class="tiny muted">${esc(getTrack(t.trackId)?.name||'')}</div>
+      </div>
+      <span class="badge ${t.dueDate<today()?'warn':''}">${t.dueDate<today()?'просрочено ':''}${fmtShort(t.dueDate)}</span>
+    </div>`).join('') : `<div class="empty">Ближайших дедлайнов нет</div>`;
+
+  return `
+  <div class="row between" style="margin-bottom:18px;align-items:flex-end">
+    <div>
+      <h1>Привет 👋</h1>
+      <div class="muted small">Неделя ${weekNum()} обучения · ${periodLabel}: ${fmtH(hours)} · ${done.length} задач</div>
+    </div>
+    <div class="row">
+      <button class="btn primary" data-action="start-session">▶ Начать учебную сессию</button>
+      <button class="btn" data-action="add-task">+ Добавить задачу</button>
+    </div>
+  </div>
+
+  <div class="row" style="margin-bottom:16px">
+    ${['today','week','month'].map(p=>`<div class="tab ${ui.period===p?'active':''}" data-action="period" data-p="${p}">${p==='today'?'Сегодня':p==='week'?'Неделя':'Месяц'}</div>`).join('')}
+  </div>
+
+  <div class="grid metrics" style="margin-bottom:18px">
+    ${metricCard('Выполнено задач', done.length, periodLabel)}
+    ${metricCard('Учебные часы', fmtH(hours), `цель ${fmtH(goal)} / нед.`)}
+    ${metricCard('Недельный план', planPct+'%', `${fmtH(hours)} из ${fmtH(goal)}`)}
+    ${metricCard('Аналитика', an.pct+'%', `${an.done}/${an.total} тем`)}
+    ${metricCard('Юридический трек', law.pct+'%', `${law.done}/${law.total} тем`)}
+    ${metricCard('Проекты', projectsDone, `из ${state.projects.length}`)}
+    ${metricCard('Отклики', appsSent, `всего ${state.applications.length}`)}
+  </div>
+
+  <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:14px" class="ov-grid">
+    <div>
+      <div class="card" style="margin-bottom:14px">
+        <div class="row between" style="margin-bottom:12px"><h2 style="margin:0">Задачи на сегодня</h2><span class="small muted">${todayTasks.filter(t=>t.done).length}/${todayTasks.length}</span></div>
+        ${todayHTML}
+      </div>
+      <div class="card" style="margin-bottom:14px">
+        <h2>План и факт учебных часов</h2>
+        <div class="chart">${chartHTML}</div>
+        <div class="legend"><span><i style="background:#33383f"></i>План</span><span><i style="background:#c9a96a"></i>Факт</span></div>
+      </div>
+      <div class="card">
+        <h2>Недельный календарь</h2>
+        <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(140px,1fr))">${calendarHTML}</div>
+      </div>
+    </div>
+    <div>
+      ${nextHTML}
+      <div class="card" style="margin-top:14px">
+        <h2>Прогресс по трекам</h2>
+        ${tracksHTML}
+      </div>
+      <div class="card" style="margin-top:14px">
+        <h2>Ближайшие дедлайны</h2>
+        ${dlHTML}
+      </div>
+    </div>
+  </div>
+  <style>@media(max-width:1000px){.ov-grid{grid-template-columns:1fr !important}}</style>`;
+}
+
+/* ================= СТРОКА ЗАДАЧИ ================= */
+function taskRow(t){
+  const tr = getTrack(t.trackId);
+  const mod = tr ? tr.modules.find(m=>m.id===t.moduleId) : null;
+  return `<div class="task ${t.done?'done':''}">
+    <input type="checkbox" data-action="toggle" data-id="${t.id}" ${t.done?'checked':''}>
+    <div class="task-body">
+      <div class="task-title">
+        <span class="t">${esc(t.title)}</span>
+        <span class="badge ${t.priority==='высокий'?'high':t.priority==='низкий'?'low':''}">${t.priority}</span>
+        <span class="badge ${t.done?'ok':''}">${taskStatus(t)}</span>
+        ${isOverdue(t)?`<span class="badge warn">просрочено</span>`:''}
+      </div>
+      <div class="task-meta">
+        <span>${esc(tr?.name||'—')}${mod?' / '+esc(mod.name):''}</span>
+        <span>План: ${fmtH(t.plannedH)}</span>
+        <span>Факт: <input type="number" min="0" step="0.5" value="${t.actualH}" data-field="actual" data-id="${t.id}"> ч</span>
+        ${t.dueDate?`<span>${t.dueDate<today()&&!t.done?'⚠ ':''}${fmt(t.dueDate)}</span>`:''}
+      </div>
+    </div>
+    <div class="task-actions">
+      <button class="icon-btn" data-action="edit-task" data-id="${t.id}" title="Редактировать">✎</button>
+      <button class="icon-btn" data-action="del-task" data-id="${t.id}" title="Удалить">×</button>
+    </div>
+  </div>`;
+}
+
+/* ================= ТРЕКИ ================= */
+function tracksHTML(){
+  const tracks = activeTracks();
+  if(!ui.trackId || !tracks.find(t=>t.id===ui.trackId)) ui.trackId = tracks[0]?.id || null;
+  const tr = getTrack(ui.trackId);
+  const tabs = tracks.map(t=>`<div class="tab ${t.id===ui.trackId?'active':''}" data-action="select-track" data-id="${t.id}">${esc(t.name)}</div>`).join('');
+  if(!tr) return `<h1>Треки</h1><div class="empty">Нет активных треков</div>`;
+
+  const p = trackProgress(tr);
+  const planned = sumH(tasksOfTrack(tr.id).map(t=>t.plannedH));
+  const actual = sumH(tasksOfTrack(tr.id).map(t=>t.actualH));
+
+  const modulesHTML = tr.modules.map(m=>{
+    const mt = tasksOfModule(m.id);
+    const mp = progress(mt);
+    return `<div class="module">
+      <div class="module-head">
+        <span>${esc(m.name)}</span>
+        <span class="small muted">${mp.done}/${mp.total} · ${mp.pct}%</span>
+      </div>
+      <div class="module-body">
+        <div class="bar" style="margin-bottom:10px"><i style="width:${mp.pct}%"></i></div>
+        ${mt.length ? mt.map(t=>taskDetail(t)).join('') : `<div class="tiny muted">Задач нет</div>`}
+      </div>
+    </div>`;
+  }).join('');
+
+  return `
+  <div class="row between" style="margin-bottom:14px">
+    <h1>Учебные треки</h1>
+    <button class="btn" data-action="add-task" data-track="${tr.id}">+ Добавить задачу в трек</button>
+  </div>
+  <div class="tabs">${tabs}</div>
+  <div class="card" style="margin-bottom:16px">
+    <div class="row between">
+      <div><h2 style="margin:0">${esc(tr.name)}</h2><div class="small muted">Приоритет: ${tr.priority} · ${p.done}/${p.total} тем</div></div>
+      <div style="text-align:right"><div style="font-size:20px;font-weight:600;color:#c9a96a">${p.pct}%</div><div class="tiny muted">${fmtH(actual)} / ${fmtH(planned)}</div></div>
+    </div>
+    <div class="bar" style="margin-top:12px"><i style="width:${p.pct}%"></i></div>
+  </div>
+  ${modulesHTML}`;
+}
+
+function taskDetail(t){
+  return `<div class="task ${t.done?'done':''}" style="flex-wrap:wrap">
+    <input type="checkbox" data-action="toggle" data-id="${t.id}" ${t.done?'checked':''}>
+    <div class="task-body">
+      <div class="task-title">
+        <span class="t">${esc(t.title)}</span>
+        <span class="badge ${t.priority==='высокий'?'high':t.priority==='низкий'?'low':''}">${t.priority}</span>
+        <span class="badge">${taskStatus(t)}</span>
+      </div>
+      <div class="task-meta" style="margin-bottom:6px">
+        <span>План: ${fmtH(t.plannedH)}</span>
+        <span>Факт: <input type="number" min="0" step="0.5" value="${t.actualH}" data-field="actual" data-id="${t.id}"> ч</span>
+        ${t.dueDate?`<span>до ${fmt(t.dueDate)}</span>`:''}
+      </div>
+      <div class="form-grid" style="gap:8px">
+        <div><label>Ссылка на материал</label><input value="${esc(t.link)}" placeholder="https://…" data-field="link" data-id="${t.id}"></div>
+        <div><label>Комментарий</label><input value="${esc(t.comment)}" placeholder="Комментарий" data-field="comment" data-id="${t.id}"></div>
+      </div>
+      <div style="margin-top:8px">
+        <label>${t.trackId==='product'?'Объяснить своими словами / заметки и ошибки':'Заметки и ошибки'}</label>
+        <textarea data-field="notes" data-id="${t.id}" placeholder="Что понял, что вызвало сложности…">${esc(t.notes)}</textarea>
+      </div>
+    </div>
+    <div class="task-actions">
+      <button class="icon-btn" data-action="edit-task" data-id="${t.id}" title="Редактировать">✎</button>
+      <button class="icon-btn" data-action="del-task" data-id="${t.id}" title="Удалить">×</button>
+    </div>
+  </div>`;
+}
+
+/* ================= ЗАДАЧИ ================= */
+function tasksHTML(){
+  const f = ui.taskFilter;
+  let list = state.tasks.slice();
+  if(f.status==='today') list = list.filter(t=>t.dueDate===today() && !t.done);
+  else if(f.status==='overdue') list = list.filter(isOverdue);
+  else if(f.status==='done') list = list.filter(t=>t.done);
+  else if(f.status==='open') list = list.filter(t=>!t.done);
+  if(f.priority!=='all') list = list.filter(t=>t.priority===f.priority);
+  if(f.track!=='all') list = list.filter(t=>t.trackId===f.track);
+  if(f.q.trim()){
+    const q = f.q.trim().toLowerCase();
+    list = list.filter(t=>(t.title+' '+t.notes+' '+t.link+' '+t.comment).toLowerCase().includes(q));
+  }
+  list.sort((a,b)=>{
+    if(a.done!==b.done) return a.done?1:-1;
+    const da=a.dueDate||'9999-99-99', db=b.dueDate||'9999-99-99';
+    if(da!==db) return da<db?-1:1;
+    return PRIORITIES.indexOf(a.priority)-PRIORITIES.indexOf(b.priority);
+  });
+
+  const trackOpts = `<option value="all">Все треки</option>` + activeTracks().map(t=>`<option value="${t.id}" ${f.track===t.id?'selected':''}>${esc(t.name)}</option>`).join('');
+
+  return `
+  <div class="row between" style="margin-bottom:16px">
+    <h1>Задачи</h1>
+    <button class="btn primary" data-action="add-task">+ Добавить задачу</button>
+  </div>
+  <div class="card" style="margin-bottom:14px">
+    <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(160px,1fr))">
+      <div><label>Статус</label><select onchange="ui.taskFilter.status=this.value;render()">
+        <option value="all" ${f.status==='all'?'selected':''}>Все</option>
+        <option value="open" ${f.status==='open'?'selected':''}>Активные</option>
+        <option value="today" ${f.status==='today'?'selected':''}>Сегодня</option>
+        <option value="overdue" ${f.status==='overdue'?'selected':''}>Просроченные</option>
+        <option value="done" ${f.status==='done'?'selected':''}>Завершённые</option>
+      </select></div>
+      <div><label>Приоритет</label><select onchange="ui.taskFilter.priority=this.value;render()">
+        <option value="all" ${f.priority==='all'?'selected':''}>Все</option>
+        ${PRIORITIES.map(p=>`<option value="${p}" ${f.priority===p?'selected':''}>${p}</option>`).join('')}
+      </select></div>
+      <div><label>Трек</label><select onchange="ui.taskFilter.track=this.value;render()">${trackOpts}</select></div>
+      <div><label>Поиск</label><input value="${esc(f.q)}" placeholder="Название или заметка" oninput="ui.taskFilter.q=this.value;renderTasksOnly()"></div>
+    </div>
+  </div>
+  <div id="task-list">
+    <div class="small muted" style="margin-bottom:10px">Найдено: ${list.length}</div>
+    ${list.length ? list.map(taskRow).join('') : `<div class="empty">Задач по фильтру нет</div>`}
+  </div>`;
+}
+function renderTasksOnly(){
+  const f = ui.taskFilter;
+  let list = state.tasks.slice();
+  if(f.status==='today') list = list.filter(t=>t.dueDate===today() && !t.done);
+  else if(f.status==='overdue') list = list.filter(isOverdue);
+  else if(f.status==='done') list = list.filter(t=>t.done);
+  else if(f.status==='open') list = list.filter(t=>!t.done);
+  if(f.priority!=='all') list = list.filter(t=>t.priority===f.priority);
+  if(f.track!=='all') list = list.filter(t=>t.trackId===f.track);
+  if(f.q.trim()){ const q=f.q.trim().toLowerCase(); list = list.filter(t=>(t.title+' '+t.notes+' '+t.link+' '+t.comment).toLowerCase().includes(q)); }
+  list.sort((a,b)=>{ if(a.done!==b.done) return a.done?1:-1; const da=a.dueDate||'9999-99-99', db=b.dueDate||'9999-99-99'; if(da!==db) return da<db?-1:1; return PRIORITIES.indexOf(a.priority)-PRIORITIES.indexOf(b.priority); });
+  const el = document.getElementById('task-list');
+  if(el) el.innerHTML = `<div class="small muted" style="margin-bottom:10px">Найдено: ${list.length}</div>` + (list.length ? list.map(taskRow).join('') : `<div class="empty">Задач по фильтру нет</div>`);
+}
+
+/* ================= РАСПИСАНИЕ ================= */
+function scheduleHTML(){
+  const days = [0,1,2,3,4,5,6];
+  const total = sumH(days.flatMap(d=>(state.schedule[d]||[]).map(s=>s.h)));
+  const goal = state.settings.weeklyGoal || 25;
+  const diff = Math.round((total-goal)*10)/10;
+  const warn = Math.abs(diff) > 0.01
+    ? `<div class="notice ${diff>0?'':'red'}">Сумма часов в расписании: ${fmtH(total)}. Цель: ${fmtH(goal)}. ${diff>0?'Перебор на '+fmtH(diff):'Не хватает '+fmtH(Math.abs(diff))}. Скорректируйте расписание или цель.</div>`
+    : `<div class="notice">Сумма часов совпадает с недельной целью: ${fmtH(total)}.</div>`;
+
+  const daysHTML = days.map(d=>{
+    const slots = state.schedule[d] || [];
+    return `<div class="card" style="margin-bottom:12px">
+      <div class="row between" style="margin-bottom:10px">
+        <h2 style="margin:0">${DAYS[d]}${d===(new Date().getDay()+6)%7?' · сегодня':''}</h2>
+        <span class="small muted">${fmtH(sumH(slots.map(s=>s.h)))}</span>
+      </div>
+      ${slots.map((s,i)=>`
+        <div class="row" style="margin-bottom:6px;flex-wrap:nowrap">
+          <input value="${esc(s.title)}" data-sched="title" data-day="${d}" data-idx="${i}" style="flex:2">
+          <select data-sched="trackId" data-day="${d}" data-idx="${i}" style="flex:1.4">
+            <option value="">— без трека —</option>
+            ${activeTracks().map(t=>`<option value="${t.id}" ${s.trackId===t.id?'selected':''}>${esc(t.name)}</option>`).join('')}
+          </select>
+          <input type="number" min="0" step="0.5" value="${s.h}" data-sched="h" data-day="${d}" data-idx="${i}" style="width:80px;flex-shrink:0">
+          <button class="icon-btn" data-action="del-slot" data-day="${d}" data-idx="${i}">×</button>
+        </div>`).join('')}
+      <button class="btn sm ghost" data-action="add-slot" data-day="${d}">+ Слот</button>
+    </div>`;
+  }).join('');
+
+  return `<h1>Расписание</h1>
+  <div class="small muted" style="margin-bottom:14px">Недельная цель: ${fmtH(goal)}. Изменения сохраняются автоматически.</div>
+  ${warn}
+  ${daysHTML}`;
+}
+
+/* ================= ПРОЕКТЫ ================= */
+function projectsHTML(){
+  const doneCount = state.projects.filter(p=>p.stages.every(s=>s.done)).length;
+  const cards = state.projects.map(p=>{
+    const done = p.stages.filter(s=>s.done).length;
+    const pct = Math.round(done/p.stages.length*100);
+    return `<div class="card" style="margin-bottom:12px">
+      <div class="row between" style="margin-bottom:8px">
+        <h3 style="margin:0">${esc(p.name)} ${p.legal?'<span class="badge">юр. кейс</span>':''}</h3>
+        <div class="row">
+          <span class="small muted">${pct}%</span>
+          <button class="icon-btn" data-action="del-project" data-id="${p.id}">×</button>
+        </div>
+      </div>
+      <div class="bar" style="margin-bottom:10px"><i style="width:${pct}%"></i></div>
+      ${p.stages.map((s,i)=>`<div class="check-line"><input type="checkbox" data-action="toggle-stage" data-id="${p.id}" data-idx="${i}" ${s.done?'checked':''}><span style="${s.done?'color:#8f959c;text-decoration:line-through':''}">${esc(s.name)}</span></div>`).join('')}
+    </div>`;
+  }).join('');
+
+  return `<div class="row between" style="margin-bottom:16px">
+    <h1>Проекты и портфолио</h1>
+    <button class="btn primary" data-action="add-project">+ Новый проект</button>
+  </div>
+  <div class="small muted" style="margin-bottom:14px">Завершено проектов: ${doneCount} из ${state.projects.length}</div>
+  ${cards || `<div class="empty">Проектов пока нет</div>`}`;
+}
+
+/* ================= ПОИСК РАБОТЫ ================= */
+function jobsHTML(){
+  const sent = state.applications.filter(a=>a.status!=='планирую откликнуться').length;
+  const interviews = state.applications.filter(a=>['собеседование','тестовое задание','оффер'].includes(a.status)).length;
+  const offers = state.applications.filter(a=>a.status==='оффер').length;
+  const rows = state.applications.map(a=>`
+    <tr>
+      <td>${esc(a.company)}</td>
+      <td>${esc(a.position)}<div class="tiny muted">${esc(a.direction||'')}</div></td>
+      <td>${a.link?`<a href="${esc(a.link)}" target="_blank" rel="noopener">вакансия</a>`:'—'}</td>
+      <td>${esc(a.salary||'—')}</td>
+      <td>${a.date?fmtShort(a.date):'—'}</td>
+      <td><select onchange="setAppField('${a.id}','status',this.value)" style="min-width:150px">${STATUSES.map(s=>`<option ${a.status===s?'selected':''}>${s}</option>`).join('')}</select></td>
+      <td>${esc(a.next||'—')}</td>
+      <td style="max-width:220px">${esc(a.comment||'')}</td>
+      <td><div class="row" style="flex-wrap:nowrap"><button class="icon-btn" data-action="edit-app" data-id="${a.id}">✎</button><button class="icon-btn" data-action="del-app" data-id="${a.id}">×</button></div></td>
+    </tr>`).join('');
+
+  return `<div class="row between" style="margin-bottom:16px">
+    <h1>Поиск работы</h1>
+    <button class="btn primary" data-action="add-app">+ Добавить отклик</button>
+  </div>
+  <div class="grid metrics" style="margin-bottom:16px">
+    ${metricCard('Всего откликов', state.applications.length, 'в списке')}
+    ${metricCard('Отправлено', sent, 'и далее по статусу')}
+    ${metricCard('Собеседования', interviews, 'включая тестовые')}
+    ${metricCard('Офферы', offers, '')}
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Компания</th><th>Должность</th><th>Ссылка</th><th>Зарплата</th><th>Дата</th><th>Статус</th><th>Следующий шаг</th><th>Комментарии</th><th></th></tr></thead>
+      <tbody>${rows || `<tr><td colspan="9"><div class="empty">Откликов пока нет. Нажмите «Добавить отклик».</div></td></tr>`}</tbody>
+    </table>
+  </div>`;
+}
+
+/* ================= СТАТИСТИКА ================= */
+function statsHTML(){
+  const r = periodRange('week');
+  const planned = sumH(weekDays(r.start).flatMap((d,i)=>(state.schedule[i]||[]).map(s=>s.h)));
+  const actual = hoursIn(r);
+  const doneWeek = completedIn(r);
+  const overdue = state.tasks.filter(isOverdue);
+  const left = state.tasks.filter(t=>!t.done && t.dueDate && t.dueDate>=r.start && t.dueDate<=r.end);
+
+  const daysHTML = weekDays(r.start).map((d,i)=>{
+    const p = sumH((state.schedule[i]||[]).map(s=>s.h));
+    const a = sumH(state.sessions.filter(s=>s.date===d).map(s=>s.hours));
+    const pct = p ? Math.min(100, Math.round(a/p*100)) : 0;
+    return `<div class="progress-line"><span style="width:34px">${DAYS[i]}</span><div class="bar"><i style="width:${pct}%"></i></div><span style="width:92px;text-align:right">${fmtH(a)} / ${fmtH(p)}</span></div>`;
+  }).join('');
+
+  // Часы по неделям (8)
+  let cur = weekStart(today());
+  const weeks = [];
+  for(let i=7;i>=0;i--){
+    const ws = addDays(cur, -7*i), we = addDays(ws,6);
+    weeks.push({ws, we, h: sumH(state.sessions.filter(s=>s.date>=ws && s.date<=we).map(s=>s.hours))});
+  }
+  const maxW = Math.max(1, ...weeks.map(w=>w.h));
+  const weeksHTML = weeks.map(w=>`<div class="col">
+      <div class="bars"><div class="b actual" style="height:${Math.max(2,w.h/maxW*100)}%" title="${fmtH(w.h)}"></div></div>
+      <div class="day">${fmtShort(w.ws)}</div>
+    </div>`).join('');
+
+  const tracksHTML = activeTracks().map(t=>{
+    const p = trackProgress(t);
+    return `<div class="progress-line"><span style="flex:1">${esc(t.name)}</span><div class="bar" style="width:120px"><i style="width:${p.pct}%"></i></div><span style="width:44px;text-align:right">${p.pct}%</span></div>`;
+  }).join('');
+
+  const reportsHTML = state.reports.slice().reverse().map(rep=>`
+    <div class="card" style="margin-bottom:10px">
+      <div class="row between" style="margin-bottom:6px">
+        <strong style="font-size:13px">Неделя с ${fmt(rep.weekStart)}</strong>
+        <button class="icon-btn" data-action="del-report" data-id="${rep.id}">×</button>
+      </div>
+      <div class="tiny" style="white-space:pre-wrap;color:#b9b6b1">${esc(rep.text)}</div>
+    </div>`).join('') || `<div class="empty">Отчётов пока нет</div>`;
+
+  return `<h1>Статистика обучения</h1>
+  <div class="grid metrics" style="margin:16px 0">
+    ${metricCard('План на неделю', fmtH(planned), 'из расписания')}
+    ${metricCard('Факт за неделю', fmtH(actual), `выполнение ${planned?Math.round(actual/planned*100):0}%`)}
+    ${metricCard('Задач завершено', doneWeek.length, 'за неделю')}
+    ${metricCard('Просрочено', overdue.length, 'активных задач')}
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px" class="stats-grid">
+    <div class="card">
+      <h2>Выполнение плана по дням</h2>
+      ${daysHTML}
+    </div>
+    <div class="card">
+      <h2>Учебные часы по неделям</h2>
+      <div class="chart">${weeksHTML}</div>
+      <div class="legend"><span><i style="background:#c9a96a"></i>Фактические часы</span></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:14px">
+    <h2>Прогресс по трекам</h2>
+    ${tracksHTML}
+  </div>
+
+  <div class="card" style="margin-top:14px">
+    <div class="row between" style="margin-bottom:10px">
+      <h2 style="margin:0">Еженедельный отчёт</h2>
+      <div class="row">
+        <button class="btn sm" data-action="gen-report">Сгенерировать черновик</button>
+        <button class="btn sm primary" data-action="save-report">Сохранить отчёт</button>
+      </div>
+    </div>
+    <textarea id="report-text" style="min-height:130px" placeholder="Что завершено, что осталось, просрочки, что мешало, три приоритета на следующую неделю…"></textarea>
+  </div>
+  <div style="margin-top:14px">${reportsHTML}</div>
+  <style>@media(max-width:900px){.stats-grid{grid-template-columns:1fr !important}}</style>`;
+}
+
+/* ================= НАСТРОЙКИ ================= */
+function settingsHTML(){
+  return `<h1>Настройки</h1>
+  <div class="small muted" style="margin-bottom:16px">Данные хранятся локально в этом браузере (localStorage). Синхронизация между устройствами не реализована — используйте резервную копию JSON.</div>
+  <div class="card" style="margin-bottom:14px">
+    <h2>Цель и старт</h2>
+    <div class="form-grid">
+      <div><label>Недельная цель, часов</label><input type="number" min="1" step="0.5" value="${state.settings.weeklyGoal}" data-setting="weeklyGoal"></div>
+      <div><label>Дата начала обучения</label><input type="date" value="${state.settings.startDate}" data-setting="startDate"></div>
+    </div>
+    <div class="small muted" style="margin-top:8px">Текущая неделя обучения: ${weekNum()}</div>
+  </div>
+
+  <div class="card" style="margin-bottom:14px">
+    <h2>Данные</h2>
+    <div class="row">
+      <button class="btn" data-action="export-json">Экспорт JSON (резервная копия)</button>
+      <button class="btn" data-action="import-json">Импорт JSON</button>
+      <button class="btn" data-action="export-csv">Экспорт задач в CSV</button>
+      <button class="btn danger" data-action="reset-all">Сбросить все данные</button>
+    </div>
+    <input type="file" id="import-file" accept="application/json" style="display:none">
+  </div>
+
+  <div class="card">
+    <h2>Управление треками</h2>
+    ${state.tracks.map(t=>`<div class="row between" style="padding:7px 0;border-bottom:1px solid #1b1e23">
+      <div>${esc(t.name)} <span class="badge">${t.priority}</span> ${t.archived?'<span class="badge low">в архиве</span>':''}</div>
+      <button class="btn sm ghost" data-action="toggle-archive" data-id="${t.id}">${t.archived?'Вернуть':'В архив'}</button>
+    </div>`).join('')}
+  </div>`;
+}
+
+/* ================= РЕНДЕР ================= */
+function render(){
+  renderNav(); renderTopbar();
+  const v = document.getElementById('view');
+  switch(ui.view){
+    case 'overview': v.innerHTML = overviewHTML(); break;
+    case 'tracks': v.innerHTML = tracksHTML(); break;
+    case 'tasks': v.innerHTML = tasksHTML(); break;
+    case 'schedule': v.innerHTML = scheduleHTML(); break;
+    case 'projects': v.innerHTML = projectsHTML(); break;
+    case 'jobs': v.innerHTML = jobsHTML(); break;
+    case 'stats': v.innerHTML = statsHTML(); break;
+    case 'settings': v.innerHTML = settingsHTML(); break;
+  }
+}
+
+/* ================= МОДАЛКА ЗАДАЧИ ================= */
+function moduleOptions(trackId, selected){
+  const tr = getTrack(trackId);
+  if(!tr) return `<option value="">Без модуля</option>`;
+  return `<option value="">Без модуля</option>` + tr.modules.map(m=>`<option value="${m.id}" ${selected===m.id?'selected':''}>${esc(m.name)}</option>`).join('');
+}
+function updateModules(){
+  const tid = document.getElementById('f-track').value;
+  document.getElementById('f-module').innerHTML = moduleOptions(tid, null);
+}
+function openTaskModal(id, presetTrack){
+  const t = id ? getTask(id) : null;
+  const trackId = t ? t.trackId : (presetTrack || activeTracks()[0]?.id || '');
+  const html = `
+    <div class="row between" style="margin-bottom:16px"><h3 style="margin:0">${t?'Редактировать задачу':'Новая задача'}</h3><button class="icon-btn" onclick="closeModal()">×</button></div>
+    <div class="form-row"><label>Название</label><input id="f-title" value="${t?esc(t.title):''}" placeholder="Например: пройти тему JOIN"></div>
+    <div class="form-grid">
+      <div class="form-row"><label>Трек</label><select id="f-track" onchange="updateModules()">
+        ${activeTracks().map(x=>`<option value="${x.id}" ${x.id===trackId?'selected':''}>${esc(x.name)}</option>`).join('')}
+      </select></div>
+      <div class="form-row"><label>Модуль</label><select id="f-module">${moduleOptions(trackId, t?.moduleId)}</select></div>
+    </div>
+    <div class="form-grid">
+      <div class="form-row"><label>Приоритет</label><select id="f-priority">${PRIORITIES.map(p=>`<option ${t?.priority===p?'selected':''}>${p}</option>`).join('')}</select></div>
+      <div class="form-row"><label>Плановая дата</label><input type="date" id="f-due" value="${t?.dueDate||''}"></div>
+    </div>
+    <div class="form-grid">
+      <div class="form-row"><label>Плановая длительность, ч</label><input type="number" min="0" step="0.5" id="f-planned" value="${t?t.plannedH:1}"></div>
+      <div class="form-row"><label>Фактически, ч</label><input type="number" min="0" step="0.5" id="f-actual" value="${t?t.actualH:0}"></div>
+    </div>
+    <div class="form-row"><label>Ссылка</label><input id="f-link" value="${t?esc(t.link):''}" placeholder="https://…"></div>
+    <div class="form-row"><label>Комментарий</label><input id="f-comment" value="${t?esc(t.comment):''}"></div>
+    <div class="form-row"><label>Заметки</label><textarea id="f-notes">${t?esc(t.notes):''}</textarea></div>
+    <div class="row" style="justify-content:flex-end;margin-top:8px">
+      <button class="btn ghost" onclick="closeModal()">Отмена</button>
+      <button class="btn primary" data-action="save-task" data-id="${t?t.id:''}">Сохранить</button>
+    </div>`;
+  openModal(html);
+}
+function saveTaskFromModal(id){
+  const title = document.getElementById('f-title').value.trim();
+  if(!title){ alert('Введите название задачи'); return; }
+  const trackId = document.getElementById('f-track').value;
+  const moduleId = document.getElementById('f-module').value || null;
+  const priority = document.getElementById('f-priority').value;
+  const dueDate = document.getElementById('f-due').value || null;
+  const plannedH = Math.max(0, +document.getElementById('f-planned').value || 0);
+  const actualH = Math.max(0, +document.getElementById('f-actual').value || 0);
+  const link = document.getElementById('f-link').value.trim();
+  const comment = document.getElementById('f-comment').value.trim();
+  const notes = document.getElementById('f-notes').value.trim();
+
+  if(id){
+    const t = getTask(id);
+    Object.assign(t, {title, trackId, moduleId, priority, dueDate, plannedH, link, comment, notes});
+    if(Math.abs(actualH - t.actualH) > 0.001) setActual(t, actualH);
+  } else {
+    const t = { id:uid(), title, trackId, moduleId, priority, dueDate, plannedH, actualH:0, done:false,
+      completedAt:null, link, comment, notes, custom:true };
+    state.tasks.push(t);
+    if(actualH > 0) setActual(t, actualH);
+  }
+  save(); closeModal(); render();
+}
+
+/* ================= МОДАЛКА ОТКЛИКА ================= */
+function openAppModal(id){
+  const a = id ? state.applications.find(x=>x.id===id) : null;
+  const html = `
+    <div class="row between" style="margin-bottom:16px"><h3 style="margin:0">${a?'Редактировать отклик':'Новый отклик'}</h3><button class="icon-btn" onclick="closeModal()">×</button></div>
+    <div class="form-grid">
+      <div class="form-row"><label>Компания</label><input id="a-company" value="${a?esc(a.company):''}"></div>
+      <div class="form-row"><label>Должность</label><input id="a-position" value="${a?esc(a.position):''}"></div>
+    </div>
+    <div class="form-grid">
+      <div class="form-row"><label>Направление</label><input id="a-direction" value="${a?esc(a.direction||''):''}" placeholder="юридическое / аналитика"></div>
+      <div class="form-row"><label>Зарплата</label><input id="a-salary" value="${a?esc(a.salary||''):''}" placeholder="100–130 тыс."></div>
+    </div>
+    <div class="form-row"><label>Ссылка на вакансию</label><input id="a-link" value="${a?esc(a.link||''):''}" placeholder="https://…"></div>
+    <div class="form-grid">
+      <div class="form-row"><label>Дата отклика</label><input type="date" id="a-date" value="${a?a.date:today()}"></div>
+      <div class="form-row"><label>Статус</label><select id="a-status">${STATUSES.map(s=>`<option ${a?.status===s?'selected':''}>${s}</option>`).join('')}</select></div>
+    </div>
+    <div class="form-row"><label>Следующий шаг</label><input id="a-next" value="${a?esc(a.next||''):''}"></div>
+    <div class="form-row"><label>Комментарии</label><textarea id="a-comment">${a?esc(a.comment||''):''}</textarea></div>
+    <div class="row" style="justify-content:flex-end;margin-top:8px">
+      <button class="btn ghost" onclick="closeModal()">Отмена</button>
+      <button class="btn primary" data-action="save-app" data-id="${a?a.id:''}">Сохранить</button>
+    </div>`;
+  openModal(html);
+}
+function saveAppFromModal(id){
+  const data = {
+    company: document.getElementById('a-company').value.trim(),
+    position: document.getElementById('a-position').value.trim(),
+    direction: document.getElementById('a-direction').value.trim(),
+    salary: document.getElementById('a-salary').value.trim(),
+    link: document.getElementById('a-link').value.trim(),
+    date: document.getElementById('a-date').value || today(),
+    status: document.getElementById('a-status').value,
+    next: document.getElementById('a-next').value.trim(),
+    comment: document.getElementById('a-comment').value.trim()
+  };
+  if(!data.company){ alert('Укажите компанию'); return; }
+  if(id){ Object.assign(state.applications.find(x=>x.id===id), data); }
+  else state.applications.push({id:uid(), ...data});
+  save(); closeModal(); render();
+}
+function setAppField(id, field, value){
+  const a = state.applications.find(x=>x.id===id); if(!a) return;
+  a[field] = value; save(); render();
+}
+
+/* ================= ТАЙМЕР ================= */
+let timer = null;
+function openSessionModal(){
+  const pending = state.tasks.filter(t=>!t.done);
+  if(!pending.length){ alert('Нет незавершённых задач'); return; }
+  const opts = pending.map(t=>{
+    const tr = getTrack(t.trackId);
+    return `<option value="${t.id}">${esc(tr?.name||'')} — ${esc(t.title)}</option>`;
+  }).join('');
+  openModal(`
+    <div class="row between" style="margin-bottom:16px"><h3 style="margin:0">Учебная сессия</h3><button class="icon-btn" onclick="closeModal()">×</button></div>
+    <div class="form-row"><label>Задача</label><select id="s-task">${opts}</select></div>
+    <div class="small muted" style="margin-bottom:14px">Таймер запустится сразу. Время засчитается фактическим в момент остановки.</div>
+    <div class="row" style="justify-content:flex-end">
+      <button class="btn ghost" onclick="closeModal()">Отмена</button>
+      <button class="btn primary" data-action="start-timer">Старт</button>
+    </div>`);
+}
+function startTimer(){
+  const taskId = document.getElementById('s-task').value;
+  closeModal();
+  timer = { taskId, start: Date.now(), intervalId: null };
+  renderTimer();
+  timer.intervalId = setInterval(renderTimer, 1000);
+}
+function renderTimer(){
+  const root = document.getElementById('timer-root');
+  if(!timer){ root.innerHTML=''; return; }
+  const sec = Math.floor((Date.now()-timer.start)/1000);
+  const mm = pad(Math.floor(sec/60)), ss = pad(sec%60);
+  const t = getTask(timer.taskId);
+  root.innerHTML = `<div class="timer-widget">
+    <div>
+      <div class="tiny muted">Сессия</div>
+      <div class="small" style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(t?.title||'')}</div>
+    </div>
+    <div class="time">${mm}:${ss}</div>
+    <button class="btn primary sm" data-action="stop-timer">Стоп и сохранить</button>
+  </div>`;
+}
+function stopTimer(){
+  if(!timer) return;
+  const hours = Math.max(0.01, (Date.now()-timer.start)/3600000);
+  addSession(timer.taskId, Math.round(hours*100)/100, today());
+  clearInterval(timer.intervalId);
+  timer = null;
+  document.getElementById('timer-root').innerHTML='';
+  save(); render();
+}
+
+/* ================= ЭКСПОРТ / ИМПОРТ ================= */
+function download(filename, content, type){
+  const blob = new Blob([content], {type: type||'text/plain;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 1000);
+}
+function exportJSON(){
+  download('career-os-backup-'+today()+'.json', JSON.stringify(state, null, 2), 'application/json');
+}
+function exportCSV(){
+  const header = ['id','title','track','module','priority','dueDate','plannedH','actualH','status','done','completedAt','link','notes','comment'];
+  const rows = state.tasks.map(t=>{
+    const tr = getTrack(t.trackId);
+    const mod = tr?.modules.find(m=>m.id===t.moduleId);
+    return [t.id, t.title, tr?.name||'', mod?.name||'', t.priority, t.dueDate||'', t.plannedH, t.actualH, taskStatus(t), t.done?'да':'нет', t.completedAt||'', t.link, t.notes, t.comment]
+      .map(v=>`"${String(v??'').replace(/"/g,'""')}"`).join(';');
+  });
+  download('career-os-tasks-'+today()+'.csv', '\uFEFF'+header.join(';')+'\n'+rows.join('\n'), 'text/csv;charset=utf-8');
+}
+function importJSON(file){
+  const reader = new FileReader();
+  reader.onload = () => {
+    try{
+      const data = JSON.parse(reader.result);
+      if(!data.tasks || !data.tracks) throw new Error('Неверный формат');
+      if(!confirm('Заменить текущие данные импортированными?')) return;
+      state = data; save(); load(); render(); alert('Данные импортированы');
+    }catch(e){ alert('Ошибка импорта: '+e.message); }
+  };
+  reader.readAsText(file);
+}
+
+/* ================= ДЕЛЕГИРОВАНИЕ СОБЫТИЙ ================= */
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-action]');
+  if(!el) return;
+  const action = el.dataset.action;
+  const id = el.dataset.id;
+
+  switch(action){
+    case 'nav': ui.view = el.dataset.view; render(); break;
+    case 'period': ui.period = el.dataset.p; render(); break;
+    case 'select-track': ui.trackId = id; render(); break;
+    case 'toggle': toggleTask(id); break;
+    case 'add-task': openTaskModal(null, el.dataset.track); break;
+    case 'edit-task': openTaskModal(id); break;
+    case 'del-task': {
+      const t = getTask(id);
+      if(t && confirm('Удалить задачу «'+t.title+'»?')){ state.tasks = state.tasks.filter(x=>x.id!==id); save(); render(); }
+      break;
+    }
+    case 'save-task': saveTaskFromModal(id || null); break;
+    case 'start-session': openSessionModal(); break;
+    case 'start-timer': startTimer(); break;
+    case 'stop-timer': stopTimer(); break;
+    case 'add-slot': {
+      const day = +el.dataset.day;
+      if(!state.schedule[day]) state.schedule[day] = [];
+      state.schedule[day].push({title:'Новая сессия', trackId:null, h:1});
+      save(); render(); break;
+    }
+    case 'del-slot': {
+      const day = +el.dataset.day, idx = +el.dataset.idx;
+      state.schedule[day].splice(idx,1); save(); render(); break;
+    }
+    case 'toggle-stage': {
+      const p = state.projects.find(x=>x.id===id);
+      const idx = +el.dataset.idx;
+      if(p){ p.stages[idx].done = !p.stages[idx].done; save(); render(); }
+      break;
+    }
+    case 'add-project': {
+      openModal(`<h3 style="margin-bottom:16px">Новый проект</h3>
+        <div class="form-row"><label>Название</label><input id="p-name" placeholder="Название проекта"></div>
+        <div class="row" style="justify-content:flex-end"><button class="btn ghost" onclick="closeModal()">Отмена</button><button class="btn primary" data-action="create-project">Создать</button></div>`);
+      break;
+    }
+    case 'create-project': {
+      const name = document.getElementById('p-name').value.trim();
+      if(!name){ alert('Введите название'); break; }
+      state.projects.push({ id:uid(), name, stages: PROJECT_STAGES.map(n=>({name:n,done:false})) });
+      save(); closeModal(); render(); break;
+    }
+    case 'del-project': {
+      const p = state.projects.find(x=>x.id===id);
+      if(p && confirm('Удалить проект «'+p.name+'»?')){ state.projects = state.projects.filter(x=>x.id!==id); save(); render(); }
+      break;
+    }
+    case 'add-app': openAppModal(); break;
+    case 'edit-app': openAppModal(id); break;
+    case 'save-app': saveAppFromModal(id || null); break;
+    case 'del-app': {
+      const a = state.applications.find(x=>x.id===id);
+      if(a && confirm('Удалить отклик в «'+a.company+'»?')){ state.applications = state.applications.filter(x=>x.id!==id); save(); render(); }
+      break;
+    }
+    case 'gen-report': {
+      const r = periodRange('week');
+      const done = completedIn(r).map(t=>'— '+t.title).join('\n') || '— нет';
+      const leftList = state.tasks.filter(t=>!t.done && t.dueDate && t.dueDate>=r.start && t.dueDate<=r.end).map(t=>'— '+t.title).join('\n') || '— нет';
+      const over = state.tasks.filter(isOverdue).map(t=>'— '+t.title+' ('+fmtShort(t.dueDate)+')').join('\n') || '— нет';
+      document.getElementById('report-text').value =
+`Что завершено:
+${done}
+
+Что осталось:
+${leftList}
+
+Просрочено:
+${over}
+
+Что мешало учиться:
+— 
+
+Три приоритета на следующую неделю:
+1. 
+2. 
+3. `;
+      break;
+    }
+    case 'save-report': {
+      const text = document.getElementById('report-text').value.trim();
+      if(!text){ alert('Отчёт пуст'); break; }
+      state.reports.push({ id:uid(), weekStart: weekStart(today()), text });
+      save(); render(); break;
+    }
+    case 'del-report': state.reports = state.reports.filter(x=>x.id!==id); save(); render(); break;
+    case 'export-json': exportJSON(); break;
+    case 'export-csv': exportCSV(); break;
+    case 'import-json': document.getElementById('import-file').click(); break;
+    case 'reset-all': {
+      if(confirm('Удалить все данные и начать заново? Действие необратимо.')){
+        localStorage.removeItem(LS_KEY); state = seed(); save(); ui.trackId = null; load(); render();
+      }
+      break;
+    }
+    case 'toggle-archive': {
+      const t = getTrack(id);
+      if(t){ t.archived = !t.archived; save(); if(ui.trackId===id) ui.trackId=null; render(); }
+      break;
+    }
+  }
+});
+
+/* Изменение полей */
+document.addEventListener('change', e => {
+  const el = e.target;
+
+  // Поля задач
+  if(el.dataset.field && el.dataset.id){
+    const t = getTask(el.dataset.id);
+    if(!t) return;
+    const field = el.dataset.field;
+    if(field==='actual'){
+      setActual(t, Math.max(0, +el.value || 0));
+      save(); render();
+    } else {
+      t[field] = el.value;
+      save();
+    }
+    return;
+  }
+
+  // Поля расписания
+  if(el.dataset.sched){
+    const day = +el.dataset.day, idx = +el.dataset.idx;
+    const slot = state.schedule[day]?.[idx];
+    if(!slot) return;
+    const f = el.dataset.sched;
+    if(f==='h') slot.h = Math.max(0, +el.value || 0);
+    else if(f==='trackId') slot.trackId = el.value || null;
+    else slot[f] = el.value;
+    save(); render();
+    return;
+  }
+
+  // Настройки
+  if(el.dataset.setting){
+    const f = el.dataset.setting;
+    if(f==='weeklyGoal') state.settings.weeklyGoal = Math.max(1, +el.value || 1);
+    else state.settings.startDate = el.value || today();
+    save(); render();
+    return;
+  }
+
+  // Импорт
+  if(el.id==='import-file' && el.files && el.files[0]){
+    importJSON(el.files[0]);
+    el.value = '';
+  }
+});
+
+/* Поиск в шапке */
+document.getElementById('search').addEventListener('keydown', e => {
+  if(e.key==='Enter'){
+    ui.taskFilter = { status:'all', priority:'all', track:'all', q: e.target.value };
+    ui.view = 'tasks'; render();
+  }
+});
+
+/* Клик по backdrop */
+document.addEventListener('click', e => {
+  if(e.target.classList.contains('modal-backdrop')) closeModal();
+});
+
+/* ================= ИНИЦИАЛИЗАЦИЯ ================= */
+load();
+render();
+</script>
+</body>
+</html>
